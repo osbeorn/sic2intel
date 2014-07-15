@@ -1,0 +1,528 @@
+package sic2intel.parser;
+
+import java.util.LinkedList;
+
+import java_cup.runtime.*;
+
+import sic2intel.logger.*;
+import sic2intel.structure.*;
+import sic2intel.structure.sic.*;
+
+parser code
+{:
+        public void syntax_error(Symbol cur_token) {
+            Logger.warning ("Syntax error near word '" + (String)(cur_token.value) + "' -", cur_token.left, cur_token.right);
+        }
+        
+        public void report_error(String message, Object info) {
+        }
+        
+        public void report_fatal_error(String message, Object info) throws Exception {
+        	throw new Exception(message);
+        }
+:}
+
+//terminali -- ukazi
+terminal
+	ADD, ADDF, ADDR, AND, CLEAR, COMP, COMPF, COMPR, DIV, DIVF, DIVR, FIX, FLOAT, HIO,
+	J, JEQ, JGT, JLT, JSUB, LDA, LDB, LDCH, LDF, LDL, LDS, LDT, LDX, LPS, MUL, MULF, MULR, NORM, OR, RD,
+	RMO, RSUB, SHIFTL, SHIFTR, SIO, SSK, STA, STB, STCH, STF, STI, STL, STS, STSW, STT, STX, SUB, SUBF,
+	SUBR, SVC, TD, TIO, TIX, TIXR, WD;
+	
+//terminali -- dodatni ukazi
+terminal
+	WRITE, READ;
+
+//terminali -- psevdo ukazi
+terminal
+	START, END, RESW, RESB, WORD, BYTE, EQU;
+	
+//terminali -- posebni znaki
+terminal
+	PLUS, MINUS, DIVIDE, HASH, AT, NL, COMMA, STAR, RPARENTHESIS, LPARENTHESIS, DQUOTE;
+	
+//terminali -- imena, stevila
+terminal
+	IDENTIFIER, NUMBER, HEXNUMBER, HEXCONST, CHARCONST;
+	
+// registri
+terminal 
+	REG_A, REG_B, REG_F, REG_L, REG_S, REG_SW, REG_T, REG_X, REG_PC; 	
+
+// neterminali -- potrebni za opis jezika
+non terminal SicProgram source;
+non terminal SicInstr start_instr, end_instr;
+non terminal SicInstr instr;
+non terminal LinkedList<SicInstr> instrs;
+non terminal Boolean extended, indexed;
+non terminal Integer addressing, register;
+non terminal String label_opt;
+non terminal epsilon, new_line_opt, new_line_non_opt;
+non terminal SicInstrEQU_Expr expr, operand;
+non terminal SicInstr add_instr, addf_instr, addr_instr, and_instr, clear_instr, comp_instr, compf_instr, compr_instr;
+non terminal SicInstr div_instr, divf_instr, divr_instr, fix_instr, float_instr, hio_instr, j_instr, jeq_instr, jgt_instr, jlt_instr;
+non terminal SicInstr jsub_instr, lda_instr, ldb_instr, ldch_instr, ldf_instr, ldl_instr, lds_instr, ldt_instr, ldx_instr, lps_instr;
+non terminal SicInstr mul_instr, mulf_instr, mulr_instr, norm_instr, or_instr, rd_instr, rmo_instr, rsub_instr, shiftl_instr, shiftr_instr;
+non terminal SicInstr sio_instr, ssk_instr, sta_instr, stb_instr, stch_instr, stf_instr, sti_instr, stl_instr, sts_instr, stsw_instr;
+non terminal SicInstr stt_instr, stx_instr, sub_instr, subf_instr, subr_instr, svc_instr, td_instr, tio_instr, tix_instr, tixr_instr, wd_instr;
+non terminal SicInstr resb_instr, resw_instr, byte_instr, word_instr, equ_instr;
+non terminal SicInstr write_instr, read_instr;
+
+non terminal String numbers, identifierOrNumber, identifier, numbersOrConstants, constants;
+
+/* precedence */
+precedence left PLUS, MINUS;
+precedence left DIVIDE;
+
+start with source;
+
+source ::= start_instr:s instrs:i
+		   {:
+		   	   i.addFirst(s);
+		       RESULT = new SicProgram(i);
+		   :};
+
+start_instr ::= new_line_opt IDENTIFIER:id START numbers:num new_line_non_opt
+				{:
+				    RESULT = new SicInstrSTART(id.toString(), num);
+				:};
+
+instrs ::= epsilon
+		   {:
+	 	       RESULT = new LinkedList<SicInstr>();
+		   :}
+		 | label_opt:l instr:i instrs:is
+		   {:
+		       i.label = l;
+		       is.addFirst(i);
+		       RESULT = is;
+		   :};
+
+end_instr ::= END new_line_opt
+			  {: 	
+			      RESULT = new SicInstrEND(null);
+			  :}
+		    | END identifier:id new_line_opt
+		      {:
+			      RESULT = new SicInstrEND(id);
+			  :};
+
+// format 3 instructions can use index addressing
+instr ::= end_instr:i {: RESULT = i; :}
+		| add_instr:i {: RESULT = i; :}
+		| addf_instr:i {: RESULT = i; :}
+		| addr_instr:i {: RESULT = i; :}
+		| and_instr:i {: RESULT = i; :}
+		| clear_instr:i {: RESULT = i; :}
+		| comp_instr:i {: RESULT = i; :}
+		| compf_instr:i {: RESULT = i; :}
+		| compr_instr:i {: RESULT = i; :}
+		| div_instr:i {: RESULT = i; :}
+		| divf_instr:i {: RESULT = i; :}
+		| divr_instr:i {: RESULT = i; :}
+		| fix_instr:i {: RESULT = i; :}
+		| float_instr:i {: RESULT = i; :}
+		| hio_instr:i {: RESULT = i; :}
+		| j_instr:i {: RESULT = i; :}
+		| jeq_instr:i {: RESULT = i; :}
+		| jgt_instr:i {: RESULT = i; :}
+		| jlt_instr:i {: RESULT = i; :}
+		| jsub_instr:i {: RESULT = i; :}
+		| lda_instr:i {: RESULT = i; :}
+		| ldb_instr:i {: RESULT = i; :}
+		| ldch_instr:i {: RESULT = i; :}
+		| ldf_instr:i {: RESULT = i; :}
+		| ldl_instr:i {: RESULT = i; :}
+		| lds_instr:i {: RESULT = i; :}
+		| ldt_instr:i {: RESULT = i; :}
+		| ldx_instr:i {: RESULT = i; :}
+		| lps_instr:i {: RESULT = i; :}
+		| mul_instr:i {: RESULT = i; :}
+		| mulf_instr:i {: RESULT = i; :}
+		| mulr_instr:i {: RESULT = i; :}
+		| norm_instr:i {: RESULT = i; :}
+		| or_instr:i {: RESULT = i; :}
+		| rd_instr:i {: RESULT = i; :}
+		| rmo_instr:i {: RESULT = i; :}
+		| rsub_instr:i {: RESULT = i; :}
+		| shiftl_instr:i {: RESULT = i; :}
+		| shiftr_instr:i {: RESULT = i; :}
+		| sio_instr:i {: RESULT = i; :}
+		| ssk_instr:i {: RESULT = i; :}
+		| sta_instr:i {: RESULT = i; :}
+		| stb_instr:i {: RESULT = i; :}
+		| stch_instr:i {: RESULT = i; :}
+		| stf_instr:i {: RESULT = i; :}
+		| sti_instr:i {: RESULT = i; :}
+		| stl_instr:i {: RESULT = i; :}
+		| sts_instr:i {: RESULT = i; :}
+		| stsw_instr:i {: RESULT = i; :}
+		| stt_instr:i {: RESULT = i; :}
+		| stx_instr:i {: RESULT = i; :}
+		| sub_instr:i {: RESULT = i; :}
+		| subf_instr:i {: RESULT = i; :}
+		| subr_instr:i {: RESULT = i; :}
+		| svc_instr:i {: RESULT = i; :}
+		| td_instr:i {: RESULT = i; :}
+		| tio_instr:i {: RESULT = i; :}
+		| tix_instr:i {: RESULT = i; :}
+		| tixr_instr:i {: RESULT = i; :}
+		| wd_instr:i {: RESULT = i; :}
+		| resb_instr:i {: RESULT = i; :}
+		| resw_instr:i {: RESULT = i; :}
+		| byte_instr:i {: RESULT = i; :}
+		| word_instr:i {: RESULT = i; :}
+		| equ_instr:i {: RESULT = i; :}
+		| write_instr:i {: RESULT = i; :}
+		| read_instr:i {: RESULT = i; :};
+
+add_instr ::= extended:e ADD addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrADD(e, a, id, i);
+			  :};
+addf_instr ::= extended:e ADDF addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			   {:
+			      RESULT = new SicInstrADDF(e, a, id, i);
+			   :};
+addr_instr ::= ADDR register:reg1 COMMA register:reg2 new_line_non_opt
+			   {:
+			      RESULT = new SicInstrADDR(reg1, reg2);
+			   :};
+and_instr ::= extended:e AND addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrAND(e, a, id, i);
+			  :};
+clear_instr ::= CLEAR register:reg new_line_non_opt
+			    {:
+			        RESULT = new SicInstrCLEAR(reg);
+			    :};
+comp_instr ::= extended:e COMP addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			   {:
+			       RESULT = new SicInstrCOMP(e, a, id, i);
+			   :};
+compf_instr ::= extended:e COMPF addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+				{:
+			        RESULT = new SicInstrCOMPF(e, a, id, i);
+			    :};
+compr_instr ::= COMPR register:reg1 COMMA register:reg2 new_line_non_opt
+				{:
+				    RESULT = new SicInstrCOMPR(reg1, reg2);
+				:};
+div_instr ::= extended:e DIV addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrDIV(e, a, id, i);
+			  :};
+divf_instr ::= extended:e DIVF addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			   {:
+			       RESULT = new SicInstrDIVF(e, a, id, i);
+			   :};
+divr_instr ::= DIVR register:reg1 COMMA register:reg2 new_line_non_opt
+			   {:
+			       RESULT = new SicInstrDIVR(reg1, reg2);
+			   :};
+fix_instr ::= FIX new_line_non_opt
+			  {:
+			      RESULT = new SicInstrFIX();
+			  :};
+float_instr ::= FLOAT new_line_non_opt
+				{:
+			        RESULT = new SicInstrFLOAT();
+			    :};
+hio_instr ::= HIO new_line_non_opt
+			  {:
+			      RESULT = new SicInstrHIO();
+			  :};
+j_instr ::= extended:e J addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			{:
+			    RESULT = new SicInstrJ(e, a, id.toString(), i);
+			:};
+jeq_instr ::= extended:e JEQ addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrJEQ(e, a, id.toString(), i);
+			  :};
+jgt_instr ::= extended:e JGT addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrJGT(e, a, id.toString(), i);
+			  :};
+jlt_instr ::= extended:e JLT addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrJLT(e, a, id.toString(), i);
+			  :};
+jsub_instr ::= extended:e JSUB addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			   {:
+			       RESULT = new SicInstrJSUB(e, a, id.toString(), i);
+			   :};
+lda_instr ::= extended:e LDA addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLDA(e, a, id, i);
+			  :};
+ldb_instr ::= extended:e LDB addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLDB(e, a, id, i);
+			  :};
+ldch_instr ::= extended:e LDCH addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			   {:
+			      RESULT = new SicInstrLDCH(e, a, id, i);
+			   :};
+ldf_instr ::= extended:e LDF addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLDF(e, a, id, i);
+			  :};
+ldl_instr ::= extended:e LDL addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLDL(e, a, id, i);
+			  :};
+lds_instr ::= extended:e LDS addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLDS(e, a, id, i);
+			  :};
+ldt_instr ::= extended:e LDT addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLDT(e, a, id, i);
+			  :};
+ldx_instr ::= extended:e LDX addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLDX(e, a, id, i);
+			  :};
+lps_instr ::= extended:e LPS addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrLPS(e, a, id.toString(), i);
+			  :};
+mul_instr ::= extended:e MUL addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrMUL(e, a, id, i);
+			  :};
+mulf_instr ::= extended:e MULF addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			   {:
+			       RESULT = new SicInstrMULF(e, a, id, i);
+			   :};
+mulr_instr ::= MULR register:reg1 COMMA register:reg2 new_line_non_opt
+			   {:
+			       RESULT = new SicInstrMULR(reg1, reg2);
+			   :};
+norm_instr ::= NORM new_line_non_opt
+			   {:
+			       RESULT = new SicInstrNORM();
+			   :};
+or_instr ::= extended:e OR addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			 {:
+			     RESULT = new SicInstrOR(e, a, id, i);
+			 :};
+rd_instr ::= extended:e RD addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			 {:
+			     RESULT = new SicInstrRD(e, a, id, i);
+			 :};
+rmo_instr ::= RMO register:reg1 COMMA register:reg2 new_line_non_opt
+			  {:
+			      RESULT = new SicInstrRMO(reg1, reg2);
+			  :};
+rsub_instr ::= extended:e RSUB new_line_non_opt
+			   {:
+			       RESULT = new SicInstrRSUB(e);
+			   :};
+shiftl_instr ::= SHIFTL register:reg COMMA NUMBER:n new_line_non_opt
+				 {:
+				     RESULT = new SicInstrSHIFTL(reg, n.toString());
+				 :};
+shiftr_instr ::= SHIFTR register:reg COMMA NUMBER:n new_line_non_opt
+  			     {:
+  			         RESULT = new SicInstrSHIFTR(reg, n.toString());
+  			     :};
+sio_instr ::= SIO new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSIO();
+			  :};
+ssk_instr ::= extended:e SSK addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSSK(e, a, id.toString(), i);
+			  :};
+sta_instr ::= extended:e STA addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSTA(e, a, id.toString(), i);
+			  :};
+stb_instr ::= extended:e STB addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+	 		  {:
+	 		      RESULT = new SicInstrSTB(e, a, id.toString(), i);
+	 		  :};
+stch_instr ::= extended:e STCH addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			   {:
+			       RESULT = new SicInstrSTCH(e, a, id.toString(), i);
+			   :};
+stf_instr ::= extended:e STF addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSTF(e, a, id.toString(), i);
+			  :};
+sti_instr ::= extended:e STI addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSTI(e, a, id.toString(), i);
+			  :};
+stl_instr ::= extended:e STL addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSTL(e, a, id.toString(), i);
+			  :};
+sts_instr ::= extended:e STS addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSTS(e, a, id.toString(), i);
+			  :};
+stsw_instr ::= extended:e STSW addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			   {:
+			       RESULT = new SicInstrSTSW(e, a, id.toString(), i);
+			   :};
+stt_instr ::= extended:e STT addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSTT(e, a, id.toString(), i);
+			  :};
+stx_instr ::= extended:e STX addressing:a IDENTIFIER:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSTX(e, a, id.toString(), i);
+			  :};
+sub_instr ::= extended:e SUB addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSUB(e, a, id, i);
+			  :};
+subf_instr ::= extended:e SUBF addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			   {:
+			       RESULT = new SicInstrSUBF(e, a, id, i);
+			   :};
+subr_instr ::= SUBR register:reg1 COMMA register:reg2 new_line_non_opt
+			   {:
+			       RESULT = new SicInstrSUBR(reg1, reg2);
+			   :};
+svc_instr ::= SVC NUMBER:n new_line_non_opt
+			  {:
+			      RESULT = new SicInstrSVC(n.toString());
+			  :};
+td_instr ::= extended:e TD addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			 {:
+			     RESULT = new SicInstrTD(e, a, id, i);
+			 :};
+tio_instr ::= TIO new_line_non_opt
+			  {:
+			      RESULT = new SicInstrTIO();
+			  :};
+tix_instr ::= extended:e TIX addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			  {:
+			      RESULT = new SicInstrTIX(e, a, id, i);
+			  :};
+tixr_instr ::= TIXR register:reg new_line_non_opt
+			   {:
+			       RESULT = new SicInstrTIXR(reg);
+			   :};
+wd_instr ::= extended:e WD addressing:a identifierOrNumber:id indexed:i new_line_non_opt
+			 {:
+			     RESULT = new SicInstrWD(e, a, id, i);
+			 :};
+resb_instr ::= RESB NUMBER:n new_line_non_opt
+			   {:
+			       RESULT = new SicInstrRESB(n.toString());
+			   :};
+resw_instr ::= RESW NUMBER:n new_line_non_opt
+			   {:
+			       RESULT = new SicInstrRESW(n.toString());
+			   :};
+byte_instr ::= BYTE numbersOrConstants:n new_line_non_opt
+			   {:
+			       RESULT = new SicInstrBYTE(n);
+			   :};
+word_instr ::= WORD numbersOrConstants:n new_line_non_opt
+			   {:
+			       RESULT = new SicInstrWORD(n);
+			   :};
+equ_instr ::= EQU expr:e new_line_non_opt
+			  {:
+			      RESULT = new SicInstrEQU(e);
+			  :};
+
+write_instr ::= WRITE LPARENTHESIS DQUOTE IDENTIFIER:id DQUOTE RPARENTHESIS new_line_non_opt
+				{:
+				    RESULT = new SicInstrWRITE(id.toString());	
+				:}
+			  | WRITE LPARENTHESIS IDENTIFIER:id COMMA NUMBER:num RPARENTHESIS new_line_non_opt
+			    {:
+			    	RESULT = new SicInstrWRITE(id.toString(), num.toString());
+			    :};
+				
+read_instr ::= READ LPARENTHESIS IDENTIFIER:id COMMA NUMBER:num RPARENTHESIS new_line_non_opt
+				{:
+				    RESULT = new SicInstrREAD(id.toString(), num.toString());	
+				:};				
+
+label_opt ::= epsilon 
+ 	  		  {: 
+ 	  		      RESULT = null; 
+ 	  		  :} 
+			| IDENTIFIER:id 
+			  {: 
+			      RESULT = id.toString();
+			  :};
+			
+new_line_opt ::= epsilon | NL new_line_opt;
+
+new_line_non_opt ::= NL | NL new_line_non_opt;
+
+extended ::= epsilon {: RESULT = false; :}
+		   | PLUS {: RESULT = true; :};
+		   
+indexed ::= epsilon {: RESULT = false; :}
+		  | COMMA REG_X {: RESULT = true; :};
+		   
+addressing ::= epsilon {: RESULT = SicAddressing.SIMPLE; :} // enostavno
+			 | HASH {: RESULT = SicAddressing.IMMEDIATE; :} // takojsnje
+			 | AT {: RESULT = SicAddressing.INDIRECT; :};	// posredno
+		  
+identifierOrNumber ::= identifier:id {: RESULT = id.toString(); :}
+		  			 | numbers:num {: RESULT = num.toString(); :};
+
+numbersOrConstants ::= numbers:num {: RESULT = num; :}
+					 | constants:con {: RESULT = con; :} 
+					 | identifier:id {: RESULT = id; :}; 
+				
+constants ::= CHARCONST:cc {: RESULT = cc.toString(); :}
+			| HEXCONST:hc {: RESULT = hc.toString(); :};				
+				
+numbers ::= NUMBER:num {: RESULT = num.toString(); :}  
+		  | HEXNUMBER:hexnum {: RESULT = hexnum.toString(); :};				
+		  			 
+identifier ::= IDENTIFIER:id {: RESULT = id.toString(); :};	   
+
+expr ::= operand:o PLUS expr:e 
+		 {:
+		     RESULT = new SicInstrEQU_BinExpr(SicInstrEQU_BinExpr.PLUS, o, e);
+		 :}
+	   | operand:o MINUS expr:e 
+	   	 {:
+	   	     RESULT = new SicInstrEQU_BinExpr(SicInstrEQU_BinExpr.MINUS, o, e); 
+	   	 :}
+	   | operand:o DIVIDE expr:e 
+	   	 {:
+	   	     RESULT = new SicInstrEQU_BinExpr(SicInstrEQU_BinExpr.DIVIDE, o, e); 
+	   	 :}	
+	   | operand:o 
+	     {: 
+	         RESULT = o;
+	     :};
+	   
+operand ::= STAR 
+			{: 
+			    RESULT = new SicInstrEQU_UnExpr(SicInstrEQU_UnExpr.STAR); 
+			:} 
+		  | numbers:n 
+		    {: 
+		        RESULT = new SicInstrEQU_UnExpr(SicInstrEQU_UnExpr.NUM, n); 
+		    :} 
+		  | identifier:i 
+		    {: 
+		        RESULT = new SicInstrEQU_UnExpr(SicInstrEQU_UnExpr.ID, i); 
+		    :};  
+
+register ::= REG_A {: RESULT = SicRegisters.REG_A; :}
+		   | REG_B {: RESULT = SicRegisters.REG_B; :}
+		   | REG_F {: RESULT = SicRegisters.REG_F; :}
+		   | REG_L {: RESULT = SicRegisters.REG_L; :}
+		   | REG_S {: RESULT = SicRegisters.REG_S; :}
+		   | REG_SW {: RESULT = SicRegisters.REG_SW; :}
+		   | REG_T {: RESULT = SicRegisters.REG_T; :}
+		   | REG_X {: RESULT = SicRegisters.REG_X; :}
+		   | REG_PC {: RESULT = SicRegisters.REG_PC; :}; 
+
+epsilon ::= ;
