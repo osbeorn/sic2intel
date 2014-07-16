@@ -26,6 +26,7 @@ import sic2intel.structure.intel.IntelInstrIMUL;
 import sic2intel.structure.intel.IntelInstrINT;
 import sic2intel.structure.intel.IntelInstrJcc;
 import sic2intel.structure.intel.IntelInstrMOV;
+import sic2intel.structure.intel.IntelInstrMOVZX;
 import sic2intel.structure.intel.IntelInstrOR;
 import sic2intel.structure.intel.IntelInstrPOP;
 import sic2intel.structure.intel.IntelInstrPROC;
@@ -483,8 +484,10 @@ public class CodeGenerator implements SicInstrVisitor {
 		if (acceptor.addressing == SicAddressing.INDIRECT) {
 			endMainBlock.add(new IntelInstrMOV(acceptor.label, SicAddressing.NONE, SicRegisters.REG_TMP, SicAddressing.SIMPLE, acceptor.identifier, false, acceptor));
 			endMainBlock.add(new IntelInstrMOV(null, SicAddressing.NONE, SicRegisters.REG_A, SicAddressing.SIMPLE, SicRegisters.REG_TMP, true, false, null));
+			endMainBlock.add(new IntelInstrMOVZX(null, SicAddressing.NONE, SicRegisters.REG_A, SicAddressing.NONE, SicRegisters.REG_A, true, false, acceptor));
 		} else {
 			endMainBlock.add(new IntelInstrMOV(acceptor.label, SicAddressing.NONE, SicRegisters.REG_A, acceptor.addressing, acceptor.identifier, true, acceptor.indexed, acceptor));
+			endMainBlock.add(new IntelInstrMOVZX(null, SicAddressing.NONE, SicRegisters.REG_A, SicAddressing.NONE, SicRegisters.REG_A, true, false, acceptor));
 		}
 	}
 
