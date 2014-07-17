@@ -1,7 +1,5 @@
 package sic2intel.structure.intel;
 
-import sic2intel.structure.CodeGenerator;
-import sic2intel.structure.sic.SicData;
 import sic2intel.structure.sic.SicInstr;
 import sic2intel.structure.sic.SicRegisters;
 
@@ -10,10 +8,9 @@ import sic2intel.structure.sic.SicRegisters;
  * @author benjamin
  *
  * This instruction copies the second operand (source operand) to the first operand (destination
- * operand) and zero extends the value to 16 or 32 bits. The source operand can be an immediate
- * value, general-purpose register, segment register, or memory location; the destination register
- * can be a general-purpose register, segment register, or memory location. Both operands must
- * be the same size, which can be a byte, a word, or a doubleword.
+ * operand) and zero extends the value to 16 or 32 bits. The source operand can be a general-purpose
+ * register or a segment register; the destination register can be a general-purpose register or
+ * segment register.
  *
  */
 public class IntelInstrMOVZX extends IntelInstr {
@@ -23,10 +20,9 @@ public class IntelInstrMOVZX extends IntelInstr {
 	/** 
 	 * Destination -- the first operand.
 	 * 
-	 * Can be a memory location or a register.
+	 * Can only be register.
 	 * 
 	 */
-	private String dst;
 	private Integer dstReg;
 	
 	private Integer srcAddrType;
@@ -34,7 +30,7 @@ public class IntelInstrMOVZX extends IntelInstr {
 	/** 
 	 * Source -- the second operand.
 	 * 
-	 * Can be a memory location, immediate operand or a register.
+	 * Can be a memory location or a register.
 	 *  
 	 */
 	private String src;
