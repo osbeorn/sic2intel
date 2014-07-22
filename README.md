@@ -1,6 +1,6 @@
-#Sic2Intel - a SIC/XE to Intel Pentium x86 assemly code translator
+#Sic2Intel - a SIC/XE to Intel Pentium x86 assembly code translator
 
-##1. Instructions for running the project in Eclipse
+##1. Running the project in Eclipse
 
 This project uses two custom builders **JFlex** and **JCup**. Both are included in this repository and should work out of the box, but you still have to chack some of the configured paths by going through the following instructions:
 
@@ -36,3 +36,18 @@ This project uses two custom builders **JFlex** and **JCup**. Both are included 
 - The **Arguments** section should contain *-jar ${workspace_loc}/../ext_tools/java-cup-11a.jar -package parser -parser SicSyntax -symbols SicTokens -nonterms -expect 1 sic.cup*,
 - On the **Refresh** tab select *Refresh resources upon completion*, *The project containing the selected resource* and *Recursively include sub-folders*,
 - On the **Build Options** tab select *Allocate Console*, *After a "Clean"*, *During manual builds*, *During auto builds*, *During a "Clean"* and *Specify working set of relevant resources*, where you have to specify the following resource: **src/sic2intel/parser/sic.cup**.
+
+##2. Creating a *.jar* executable
+
+After successfully building the project you can create an executable *.jar* file, that makes it easier to use the translator tool. To create an executable *.jar* file, right-click the project in Eclipse, under *Java* select **Runnable JAR file** and click **Next**. On the next page select the **Main - SICXE_2_INTELx86** *Launch configuration*, select an *Export destination*, select *Package required libraries into generated JAR* and click **Finish**.
+
+##3. Using the translator tool
+
+- Run the project in Eclipse or run the previously generated *.jar* file.
+- Select a SIC/XE *.asm* file
+- Optionally select the *debug output* option, which adds source SIC/XE instructions as comments in the translated program.
+- Press **Translate**.
+  - If successful, a translated Intel x86 *_out.asm* file should appear next to the source file.
+  - If unsuccessful, a warning will and instruct you to check the generated *.log* file.
+  
+There are several SIC/XE example programs in the *examples* folder. Check them out!
