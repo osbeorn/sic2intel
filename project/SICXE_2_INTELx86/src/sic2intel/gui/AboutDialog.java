@@ -20,9 +20,9 @@ public class AboutDialog extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static final String contentText = 
-			"Sic2Intel - a SIC/XE to Intel Pentium x86 assembly language translator\n\n"
+			"Sic2Intel - a SIC/XE to Intel Pentium x86 assembly code translator\n\n"
 			+ "Author: Benjamin Kastelic\n" 
-			+ "Version: 0.1\n";
+			+ "Version: 1.0\n";
 
 	private final JPanel contentPanel = new JPanel();
 
