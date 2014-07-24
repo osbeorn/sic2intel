@@ -11,7 +11,7 @@ public class Logger {
 	private static Date date;
 	private static PrintWriter writer;
 	private static File errFile;
-
+	
 	/**
 	 * Creates an error log file when needed.
 	 */
@@ -20,7 +20,10 @@ public class Logger {
 		date = new Date();
 		
 		try {
+			// initialise and create a new file
 			errFile = new File(sic2intel.Main.dstFilePath + "/" + sic2intel.Main.logFileName);
+			errFile.createNewFile();
+			
 			writer = new PrintWriter(errFile);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,6 +127,7 @@ public class Logger {
 	public static void close() {
 		if (writer != null) {
 			writer.close();
+			writer = null;
 		}
 	}
 	

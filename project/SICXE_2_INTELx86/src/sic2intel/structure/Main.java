@@ -39,9 +39,9 @@ public class Main {
 			return Logger.error("Unable to open source file '" + sic2intel.Main.srcFileName + "'.", e);
 		}
 
-		// lexical analysys
+		// lexical analysis
 		SicLexer lexer = new SicLexer(reader);
-		// syntax analysys
+		// syntax analysis
 		SicSyntax parser = new SicSyntax(lexer);
 		
 		SicProgram program = null;
@@ -82,7 +82,7 @@ public class Main {
 				 	sic2intel.Main.srcFileName.substring(0, sic2intel.Main.srcFileName.lastIndexOf('.')) + "_out " +
 				 	sic2intel.Main.srcFileName.substring(0, sic2intel.Main.srcFileName.lastIndexOf('.')) + "_out.o" + "\n");
 			//System.out.println("#./" + sic2intel.Main.srcFileName.substring(0, sic2intel.Main.srcFileName.lastIndexOf('.')) + "\n");
-			writer.write("#\t./" + sic2intel.Main.srcFileName.substring(0, sic2intel.Main.srcFileName.lastIndexOf('.')) + "\n\n");
+			writer.write("#\t./" + sic2intel.Main.dstFileName.substring(0, sic2intel.Main.dstFileName.lastIndexOf('.')) + "\n\n");
 			//System.out.println(".intel_syntax");
 			writer.write(".intel_syntax\n");
 			
@@ -131,20 +131,23 @@ public class Main {
 			return Logger.error("A problem occured while writing to output file '" + sic2intel.Main.dstFileName + "'.", e);
 		}
 		
+		// return status code
+		int status = 0;
+		
 		// close input file		
 		try {
 			reader.close();
 		} catch (IOException e) {
-			return Logger.error("Unable to close source file '" + sic2intel.Main.srcFileName + "'.", e);
+			status = Logger.error("Unable to close source file '" + sic2intel.Main.srcFileName + "'.", e);
 		}
 		
 		// close output file
 		try {
 			writer.close();
 		} catch (IOException e) {
-			return Logger.error("Unable to close output file '" + sic2intel.Main.dstFileName + "'.", e);
+			status = Logger.error("Unable to close output file '" + sic2intel.Main.dstFileName + "'.", e);
 		}
 		
-		return 0;
+		return status;
 	}
 }
