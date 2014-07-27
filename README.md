@@ -2,7 +2,7 @@
 
 ##1. Running the project in Eclipse
 
-This project uses two custom builders **JFlex** and **JCup**. Both Windows and Linux versions of the builders are included in this repository. The configuration files can be found in *project/SICXE_2_INTELx86/.externalToolBuilders*. To use the included builders  just rename the appropriate files by removing the **windows** or **linux** extension according to your environment. These configuration files should work out of the box, but you should still check some of the configured paths by going through the following instructions:
+This project uses two custom builders **JFlex** and **JCup**. Both Windows and Linux versions of the builders are included in this repository. The configuration files can be found in *project/SICXE_2_INTELx86/.externalToolBuilders* folder. To use the included builders just rename the appropriate files by removing the **windows** or **linux** extension according to your environment. These configuration files should work out of the box, but you should still check some of the configured paths by going through the following instructions:
 
 ###1.1. On Windows
 
