@@ -43,8 +43,8 @@ After successfully building the project you can create an executable *.jar* file
 
 ##3. Using the translator tool
 
-- Run the project in Eclipse, run the previously generated *.jar* file or just use the already compiled tool located in *executable/*
-- Select a SIC/XE *.asm* file
+- Run the project in Eclipse, run the previously generated *.jar* file or just use the already compiled tool located in the *executable/* folder of this repository.
+- Select a SIC/XE *.asm* file.
 - Optionally select the *debug output* option, which adds source SIC/XE instructions as comments in the translated program.
 - Press **Translate**.
   - If successful, a translated Intel x86 *_out.asm* file should appear next to the source file.
