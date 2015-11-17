@@ -406,7 +406,9 @@ public class CodeGenerator implements SicInstrVisitor {
 		 * Infinite loop example:
 		 *     halt J halt
 		 */
-		if(acceptor.label.equals(acceptor.identifier)) {
+		if(acceptor.label != null && acceptor.identifier != null && // just in case
+		   acceptor.label.equals(acceptor.identifier))
+		{
 			/*
 			 * Syntax: int sys_exit(int status) 
 			 * Source: kernel/exit.c 
@@ -718,7 +720,8 @@ public class CodeGenerator implements SicInstrVisitor {
 			deviceNum.equals("2")) { // stderr -- can't use this here (!! READ !!) 
 			
 			// unsigned int fd: file descriptor (only 0) --> %ebx
-			endMainBlock.add(new IntelInstrMOV(null, SicAddressing.NONE, SicRegisters.REG_B, SicAddressing.SIMPLE, deviceNum, false, null));
+			// when using STDIN or STDERR use SicAddressing.NONE --> eg.: MOV %ebx, 1
+			endMainBlock.add(new IntelInstrMOV(null, SicAddressing.NONE, SicRegisters.REG_B, SicAddressing.NONE, deviceNum, false, null));
 		} else {
 			// unsigned int fd: file descriptor stored in memory --> %ebx
 			endMainBlock.add(new IntelInstrMOV(null, SicAddressing.NONE, SicRegisters.REG_B, SicAddressing.SIMPLE, fDescriptors.get(deviceNum), false, null));
@@ -1079,7 +1082,8 @@ public class CodeGenerator implements SicInstrVisitor {
 			deviceNum.equals("2")) { // stderr
 			
 			// unsigned int fd: file descriptor (1 or 2) --> %ebx
-			endMainBlock.add(new IntelInstrMOV(null, SicAddressing.NONE, SicRegisters.REG_B, SicAddressing.SIMPLE, deviceNum, false, null));
+			// when using STDIN or STDERR use SicAddressing.NONE --> eg.: MOV %ebx, 1
+			endMainBlock.add(new IntelInstrMOV(null, SicAddressing.NONE, SicRegisters.REG_B, SicAddressing.NONE, deviceNum, false, null));
 		} else {
 			// unsigned int fd: file descriptor stored in memory --> %ebx
 			endMainBlock.add(new IntelInstrMOV(null, SicAddressing.NONE, SicRegisters.REG_B, SicAddressing.SIMPLE, fDescriptors.get(deviceNum), false, null));
