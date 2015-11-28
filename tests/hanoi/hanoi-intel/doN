@@ -1,0 +1,6 @@
+rm -fr run
+mkdir run
+sed "s/<INPUT_N>/$1/" hanoi_gen.asm > run/hanoi.asm
+as -o run/hanoi.o run/hanoi.asm
+ld -o run/hanoi run/hanoi.o
+time ./run/hanoi > /dev/null 

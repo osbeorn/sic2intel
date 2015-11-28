@@ -1,0 +1,156 @@
+****************** l001K  *******************
+Times: 25 
+
+real	0m0.280s
+user	0m0.256s
+sys	0m0.040s
+Times: 18 
+
+real	0m0.213s
+user	0m0.212s
+sys	0m0.028s
+Times: 25 
+
+real	0m0.224s
+user	0m0.220s
+sys	0m0.036s
+Times: 26 
+
+real	0m0.239s
+user	0m0.252s
+sys	0m0.024s
+Times: 25 
+
+real	0m0.259s
+user	0m0.264s
+sys	0m0.032s
+****************** l001M  *******************
+Times: 3257 
+
+real	0m3.463s
+user	0m2.888s
+sys	0m0.636s
+Times: 3120 
+
+real	0m3.327s
+user	0m2.692s
+sys	0m0.696s
+Times: 3034 
+
+real	0m3.241s
+user	0m2.592s
+sys	0m0.700s
+Times: 3157 
+
+real	0m3.378s
+user	0m2.712s
+sys	0m0.732s
+Times: 2969 
+
+real	0m3.146s
+user	0m2.632s
+sys	0m0.572s
+****************** l010K  *******************
+Times: 55 
+
+real	0m0.272s
+user	0m0.276s
+sys	0m0.056s
+Times: 56 
+
+real	0m0.217s
+user	0m0.236s
+sys	0m0.032s
+Times: 55 
+
+real	0m0.216s
+user	0m0.228s
+sys	0m0.040s
+Times: 55 
+
+real	0m0.217s
+user	0m0.228s
+sys	0m0.040s
+Times: 56 
+
+real	0m0.218s
+user	0m0.220s
+sys	0m0.048s
+****************** l010M  *******************
+Times: 25621 
+
+real	0m25.781s
+user	0m20.528s
+sys	0m5.252s
+Times: 33503 
+
+real	0m33.683s
+user	0m26.980s
+sys	0m6.692s
+Times: 33152 
+
+real	0m33.375s
+user	0m26.804s
+sys	0m6.596s
+Times: 25462 
+
+real	0m25.656s
+user	0m20.256s
+sys	0m5.404s
+Times: 33482 
+
+real	0m33.663s
+user	0m27.040s
+sys	0m6.636s
+****************** l100K  *******************
+Times: 278 
+
+real	0m0.467s
+user	0m0.416s
+sys	0m0.108s
+Times: 314 
+
+real	0m0.488s
+user	0m0.460s
+sys	0m0.084s
+Times: 321 
+
+real	0m0.483s
+user	0m0.448s
+sys	0m0.088s
+Times: 321 
+
+real	0m0.516s
+user	0m0.480s
+sys	0m0.092s
+Times: 359 
+
+real	0m0.537s
+user	0m0.520s
+sys	0m0.076s
+****************** l100M  *******************
+Times: 305516 
+
+real	5m5.755s
+user	4m2.104s
+sys	1m2.656s
+Times: 318374 
+
+real	5m18.554s
+user	4m13.928s
+sys	1m3.856s
+Times: 323886 
+
+real	5m24.076s
+user	4m19.036s
+sys	1m4.564s
+Times: 289370 
+
+real	4m49.564s
+user	3m50.712s
+sys	0m57.972s
+Times: 298910 
+
+real	4m59.094s
+user	3m58.892s
+sys	0m59.812s

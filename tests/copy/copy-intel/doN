@@ -1,0 +1,6 @@
+rm -fr run
+mkdir run
+cp copy.asm run
+as -o run/copy.o run/copy.asm
+ld -o run/copy run/copy.o
+./run/copy < $1 > $2

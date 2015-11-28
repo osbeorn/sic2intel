@@ -1,0 +1,9 @@
+for number in {15..25}
+do
+ echo "****************** $number *******************"
+ for repeat in {1..5}
+ do
+  ./doN $number 
+ done
+done
+

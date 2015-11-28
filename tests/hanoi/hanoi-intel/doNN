@@ -1,0 +1,11 @@
+NS="15 16 17 18 19 20 21 22 23 24 25"
+
+for number in {15..25}  
+do
+ echo "****************** $number *******************"
+ for repeat in {1..5}
+ do 
+   ./doN $number  
+ done
+done
+

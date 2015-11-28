@@ -1,0 +1,4 @@
+rm -fr run
+mkdir run
+sed "s/<INPUT_N>/$1/" hanoi_gen.asm > run/hanoi.asm
+time java -jar ../../SicVM.jar run/hanoi.asm 1 > /dev/null

@@ -1,0 +1,8 @@
+for f in `ls ../test_files/l*`
+do
+  echo "****************** $f  *******************"
+  for number in {1..5}
+   do
+     time ./doN  $f out.tmp
+   done
+done

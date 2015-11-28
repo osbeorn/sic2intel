@@ -1,0 +1,8 @@
+for f in `ls ../test_files/l*`
+do 
+  echo "****************** $f  *******************"
+  for number in {1..5}
+   do
+     time java -jar ../../SicVM.jar copy.asm < $f > tmp.out 
+   done
+done
